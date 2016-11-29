@@ -174,8 +174,8 @@ $(function () {
 
 	function Color(v) {
 		if (v)
-			return '#ff0000';
-		return '#0000ff';
+			return '#68A3EA';
+		return '#333338';
 	}
 
 	function selectionYears(y, n) {
