@@ -81,12 +81,13 @@ $(function () {
 			});
 		}
 		top.sort(compare);
-		return top.slice(0,n);
+		return top.slice(0,n);;
 	}
 
 	function getCategories(o) {
 		var result = new Array();
 		for (var i = 0; i < o.length; i++) {
+			if (o[i].changes != 0)
 			result.push(o[i].sujet);
 		}
 		return result;
@@ -95,25 +96,37 @@ $(function () {
 	function getData(o) {
 		var result = new Array();
 		for (var i = 0; i < o.length; i++) {
-			result.push(o[i].changes);
+			if (o[i].changes != 0)
+				result.push(o[i].changes);
 		}
 		return result;
 	}
 
-
-	$.getJSON("data.json", function(json) {
-
-	var n = 10;
-	var y = ["2007", "2008"];
-	var annees = "";
-	for (var i = 0; i < y.length; i++) {
-		annees = annees + " " + y[i];
+	function createMatrixYears(o) {
+		var result = {
+			2004 : 0,
+			2005 : 0,
+			2006 : 0,
+			2007 : 0,
+			2008 : 0
+		}
+		var y, c;
+		for (var i = 0; i < o.length; i++) {
+			y = getYear(o[i]);
+			c = getChange(o[i]);
+			result[y] = result[y] + c;
+		}
+		return result;
 	}
 
-	var m = createMatrix(json);
-	var top = getTop(n, m, y);
+	function createHisto(n, y, m) {
+		var top = getTop(n, m, y);
+		var annees = "";
+		for (var i = 0; i < y.length; i++) {
+			annees = annees + " " + y[i];
+		}
 
-    Highcharts.chart('container', {
+        Highcharts.chart('container2', {
         chart: {
             type: 'bar'
         },
@@ -149,17 +162,6 @@ $(function () {
                 }
             }
         },
-        /*legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'top',
-            x: -40,
-            y: 80,
-            floating: true,
-            borderWidth: 1,
-            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-            shadow: true
-        },*/
         credits: {
             enabled: false
         },
@@ -168,5 +170,54 @@ $(function () {
             data: getData(top)
         }]
     });
+	}
+
+
+
+	$.getJSON("data.json", function(json) {
+	var m = createMatrix(json);
+	//create histogramme
+	createHisto(10, ["2004", "2005", "2006", "2007", "2008"], m);
+
+	var years = createMatrixYears(json);
+
+	
+
+
+    var dataviz1 = Highcharts.chart('container', {
+        series: [{
+            type: 'treemap',
+            layoutAlgorithm: 'squarified',
+            data: [{
+                name: '2004',
+                value: years['2004']
+            }, {
+                name: '2005',
+                value: years['2005']
+            }, {
+                name: '2006',
+                value: years['2006']
+            }, {
+                name: '2007',
+                value: years['2007']
+            }, {
+                name: '2008',
+                value: years['2008']
+            }]
+        }],
+        title: {
+            text: 'Highcharts Treemap'
+        },
+        plotOptions : {
+        	treemap : {
+        		events : {
+        			click : function (e) {
+        				createHisto(10, ["2004", "2008"], m);
+        			}
+        		}
+        	}
+        }
+    });
+
     });
 });
