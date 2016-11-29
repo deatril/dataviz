@@ -105,7 +105,10 @@ $(function () {
 
 	var n = 10;
 	var y = ["2007", "2008"];
-
+	var annees = "";
+	for (var i = 0; i < y.length; i++) {
+		annees = annees + " " + y[i];
+	}
 
 	var m = createMatrix(json);
 	var top = getTop(n, m, y);
@@ -116,6 +119,9 @@ $(function () {
         },
         title: {
             text: 'Les ' + n +' sujets les plus modifiés'
+        },
+        subtitle: {
+            text: 'Pour les années :' + annees
         },
         xAxis: {
             categories: getCategories(top),
