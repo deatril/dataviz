@@ -172,52 +172,119 @@ $(function () {
     });
 	}
 
+	function Color(v) {
+		if (v)
+			return '#ff0000';
+		return '#0000ff';
+	}
 
+	function selectionYears(y, n) {
+		switch(n) {
+			case "2004":
+				y[0] = (y[0] + 1)%2; 
+			break;
+			case "2005":
+				y[1] = (y[1] + 1)%2; 
+			break;
+			case "2006":
+				y[2] = (y[2] + 1)%2; 
+			break;
+			case "2007":
+				y[3] = (y[3] + 1)%2; 
+			break;
+			case "2008":
+				y[4] = (y[4] + 1)%2; 
+			break;
+		}
+		return y;
+	}
 
-	$.getJSON("data.json", function(json) {
-	var m = createMatrix(json);
-	//create histogramme
-	createHisto(10, ["2004", "2005", "2006", "2007", "2008"], m);
+	function boolToString(y) {
+		var result = new Array();
+		for(var i = 0; i < y.length; i++) {
+			if (y[i]) {
+				switch(i) {
+					case 0:
+						result.push("2004");
+					break;
+					case 1:
+						result.push("2005");
+					break;
+					case 2:
+						result.push("2006");
+					break;
+					case 3:
+						result.push("2007");
+					break;
+					case 4:
+						result.push("2008");
+					break;
+				}
+			}
+		}
+		return result;
+	}
 
-	var years = createMatrixYears(json);
+	function createTreemap(years, y, m) {
 
-	
-
-
-    var dataviz1 = Highcharts.chart('container', {
+		Highcharts.chart('container', {
         series: [{
             type: 'treemap',
             layoutAlgorithm: 'squarified',
             data: [{
                 name: '2004',
-                value: years['2004']
+                value: years['2004'],
+                color : Color(y[0])
             }, {
                 name: '2005',
-                value: years['2005']
+                value: years['2005'],
+                color : Color(y[1])
             }, {
                 name: '2006',
-                value: years['2006']
+                value: years['2006'],
+                color : Color(y[2])
             }, {
                 name: '2007',
-                value: years['2007']
+                value: years['2007'],
+                color : Color(y[3])
             }, {
                 name: '2008',
-                value: years['2008']
+                value: years['2008'],
+                color : Color(y[4])
             }]
         }],
         title: {
             text: 'Highcharts Treemap'
         },
         plotOptions : {
-        	treemap : {
-        		events : {
-        			click : function (e) {
-        				createHisto(10, ["2004", "2008"], m);
-        			}
-        		}
+        	series : {
+        		point : {
+	        		events : {
+	        			click : function (e) {
+	        				y = selectionYears(y, this.name);
+	        				createHisto(10, boolToString(y), m);
+	        				createTreemap(years, y, m);
+	        			}
+	        		}
+	        	}
         	}
         }
     });
+
+	}
+
+
+
+	$.getJSON("data.json", function(json) {
+	var select = [1,1,1,1,1];
+	//create histogramme
+	var m = createMatrix(json);
+	createHisto(10, boolToString(select), m);
+	//create treemap
+	var years = createMatrixYears(json);
+	createTreemap(years, select, m);
+
+	
 
     });
 });
