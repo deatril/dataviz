@@ -143,7 +143,7 @@ $(function () {
                 }
             }
         },
-        legend: {
+        /*legend: {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
@@ -153,7 +153,7 @@ $(function () {
             borderWidth: 1,
             backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
             shadow: true
-        },
+        },*/
         credits: {
             enabled: false
         },
