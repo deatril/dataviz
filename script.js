@@ -254,7 +254,7 @@ $(function () {
             }]
         }],
         title: {
-            text: 'Highcharts Treemap'
+            text: 'Nombre de modification'
         },
         plotOptions : {
         	series : {
@@ -283,8 +283,6 @@ $(function () {
 	//create treemap
 	var years = createMatrixYears(json);
 	createTreemap(years, select, m);
-
-	
 
     });
 });
